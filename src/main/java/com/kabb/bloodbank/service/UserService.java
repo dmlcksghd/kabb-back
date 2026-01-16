@@ -5,8 +5,11 @@ import com.kabb.bloodbank.domain.enums.AgreementType;
 import com.kabb.bloodbank.domain.enums.ApprovalStatus;
 import com.kabb.bloodbank.domain.enums.AuditActionType;
 import com.kabb.bloodbank.domain.enums.UserRole;
+import com.kabb.bloodbank.dto.request.LoginRequest;
 import com.kabb.bloodbank.dto.request.SignUpRequest;
+import com.kabb.bloodbank.dto.response.LoginResponse;
 import com.kabb.bloodbank.dto.response.SignUpResponse;
+import com.kabb.bloodbank.util.JwtUtil;
 import com.kabb.bloodbank.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class UserService {
     private final FileStorageService fileStorageService;
     private final AuditLogService auditLogService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원가입 처리
@@ -161,6 +165,53 @@ public class UserService {
         }
 
         return ip;
+    }
+
+    /**
+     * 로그인 처리
+     */
+    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
+        // 1. 사용자 조회
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다"));
+
+        // 2. 비밀번호 확인
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다");
+        }
+
+        // 3. 활성화 여부 확인
+        if (!user.getActive()) {
+            throw new IllegalArgumentException("비활성화된 계정입니다");
+        }
+
+        // 4. JWT 토큰 생성
+        String token = jwtUtil.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name()
+        );
+
+        // 5. 감사 로그 기록
+        auditLogService.log(
+                AuditActionType.LOGIN,
+                "USER",
+                user.getId(),
+                user.getId(),
+                null,
+                "로그인 성공",
+                httpRequest
+        );
+
+        // 6. 응답 생성
+        return LoginResponse.builder()
+                .accessToken(token)
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .role(user.getRole().name())
+                .approvalStatus(user.getApprovalStatus())
+                .build();
     }
 }
 

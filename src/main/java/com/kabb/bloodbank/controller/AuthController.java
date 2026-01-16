@@ -1,7 +1,9 @@
 package com.kabb.bloodbank.controller;
 
+import com.kabb.bloodbank.dto.request.LoginRequest;
 import com.kabb.bloodbank.dto.request.SignUpRequest;
 import com.kabb.bloodbank.dto.response.ApiResponse;
+import com.kabb.bloodbank.dto.response.LoginResponse;
 import com.kabb.bloodbank.dto.response.SignUpResponse;
 import com.kabb.bloodbank.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,25 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("회원가입 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * 로그인
+     */
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest) {
+        try {
+            LoginResponse response = userService.login(request, httpRequest);
+            return ResponseEntity.ok(ApiResponse.success("로그인 성공", response));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("로그인 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }
