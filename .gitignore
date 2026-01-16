@@ -1,0 +1,70 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+/build
+/.gradle
+/out
+.DS_Store
+
+# Environment files
+.env
+.env.*
+.direnv/
+.envrc
+
+# Logs and temp files
+logs/
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Config files (no secrets in repo)
+*.yml
+*.yaml
+src/main/resources/*.properties
+src/test/resources/*.properties
+!src/main/resources/*.properties.example
+!src/test/resources/*.properties.example
+
+# GitHub workflows
+.github/workflows/
+
+### Spring Boot 설정 파일 ###
+application.yml

@@ -1,0 +1,17 @@
+spring.datasource.url=jdbc:h2:mem:testdb;MODE=MariaDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+
+jwt.secret=REPLACE_WITH_TEST_SECRET
+jwt.access-token-expiration=3600000
+
+file.upload.dir=${java.io.tmpdir}/kabb/uploads
+file.upload.license-dir=${file.upload.dir}/licenses
+
+toss.payment.api-url=https://api.tosspayments.com
+toss.payment.secret-key=REPLACE_WITH_TEST_KEY
